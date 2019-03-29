@@ -7,7 +7,7 @@ const path = require('path');
 const detectLibc = require('detect-libc');
 const npmLog = require('npmlog');
 const semver = require('semver');
-const simpleGet = require('simple-get');
+const wget = require('node-wget');
 const tar = require('tar');
 const copyFileSync = require('fs-copy-file-sync');
 
@@ -78,30 +78,9 @@ try {
       const tmpFile = fs.createWriteStream(tarPathTemp);
       const url = distBaseUrl + tarFilename;
       npmLog.info('sharp', `Downloading ${url}`);
-      simpleGet({ url: url, agent: agent() }, function (err, response) {
-        if (err) {
-          throw err;
-        }
-        if (response.statusCode !== 200) {
-          throw new Error(`Status ${response.statusCode}`);
-        }
-        response
-          .on('error', fail)
-          .pipe(tmpFile);
-      });
-      tmpFile
-        .on('error', fail)
-        .on('close', function () {
-          try {
-            // Attempt to rename
-            fs.renameSync(tarPathTemp, tarPathCache);
-          } catch (err) {
-            // Fall back to copy and unlink
-            copyFileSync(tarPathTemp, tarPathCache);
-            fs.unlinkSync(tarPathTemp);
-          }
-          extractTarball(tarPathCache);
-        });
+      wget({url: url, dest: tarPathTemp});
+      copyFileSync(tarPathTemp, tarPathCache);
+      extractTarball(tarPathCache);
     }
   }
 } catch (err) {

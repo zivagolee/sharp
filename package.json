@@ -101,7 +101,7 @@
     "npmlog": "^4.1.2",
     "prebuild-install": "^5.2.5",
     "semver": "^5.6.0",
-    "simple-get": "^3.0.3",
+    "node-wget": "^0.4.3",
     "tar": "^4.4.8",
     "tunnel-agent": "^0.6.0"
   },
